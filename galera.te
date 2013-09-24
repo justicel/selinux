@@ -1,0 +1,104 @@
+module galera 1.0;
+
+require {
+        type unconfined_t;
+        type init_t;
+        type auditd_t;
+        type mysqld_t;
+        type syslogd_t;
+        type getty_t;
+        type load_policy_t;
+        type port_t;
+        type system_dbusd_t;
+        type tmp_t;
+        type initrc_t;
+        type dhcpc_t;
+        type proc_net_t;
+        type kernel_t;
+        type file_t;
+        type ifconfig_exec_t;
+        type inetd_t;
+        type udev_t;
+        type mysqld_safe_t;
+        type postfix_pickup_t;
+        type hald_t;
+        type apmd_t;
+        type anon_inodefs_t;
+        type crond_t;
+        type postfix_qmgr_t;
+        type postfix_master_t;
+        type netutils_t;
+        type rpm_t;
+        type inetd_child_t;
+        class process getattr;
+        class unix_stream_socket connectto;
+        class capability sys_resource;
+        class tcp_socket { getopt create name_connect connect };
+        class file { execute setattr read create ioctl execute_no_trans write getattr unlink open append };
+        class netlink_route_socket { bind create getattr nlmsg_read };
+        class dir { write search getattr remove_name add_name };
+}
+
+#============= load_policy_t ==============
+allow load_policy_t file_t:file { read getattr open };
+
+#============= mysqld_safe_t ==============
+allow mysqld_safe_t port_t:tcp_socket name_connect;
+allow mysqld_safe_t self:capability sys_resource;
+allow mysqld_safe_t self:netlink_route_socket { bind create getattr nlmsg_read };
+allow mysqld_safe_t self:tcp_socket { getopt create connect };
+#!!!! The source type 'mysqld_safe_t' can write to a 'dir' of the following types:
+# mysqld_db_t, var_log_t, mysqld_var_run_t, root_t
+
+allow mysqld_safe_t tmp_t:dir { write remove_name add_name };
+#!!!! The source type 'mysqld_safe_t' can write to a 'file' of the following types:
+# mysqld_db_t, mysqld_log_t, mysqld_var_run_t, root_t
+
+allow mysqld_safe_t tmp_t:file { setattr read create getattr write ioctl unlink open };
+
+#============= mysqld_t ==============
+allow mysqld_t anon_inodefs_t:file write;
+allow mysqld_t apmd_t:dir { search getattr };
+allow mysqld_t apmd_t:file { read open };
+allow mysqld_t auditd_t:dir { search getattr };
+allow mysqld_t auditd_t:file { read open };
+allow mysqld_t crond_t:dir { search getattr };
+allow mysqld_t crond_t:file { read open };
+allow mysqld_t dhcpc_t:dir { search getattr };
+allow mysqld_t dhcpc_t:file { read open };
+allow mysqld_t getty_t:dir { search getattr };
+allow mysqld_t getty_t:file { read open };
+allow mysqld_t hald_t:dir { search getattr };
+allow mysqld_t hald_t:file { read open };
+allow mysqld_t ifconfig_exec_t:file { read getattr open execute execute_no_trans };
+allow mysqld_t inetd_t:dir { search getattr };
+allow mysqld_t inetd_t:file { read open };
+allow mysqld_t init_t:dir { search getattr };
+allow mysqld_t init_t:file { read open };
+allow mysqld_t initrc_t:dir { search getattr };
+allow mysqld_t initrc_t:file { read open };
+allow mysqld_t kernel_t:dir { search getattr };
+allow mysqld_t kernel_t:file { read open };
+allow mysqld_t mysqld_safe_t:dir { search getattr };
+allow mysqld_t mysqld_safe_t:file { read open };
+allow mysqld_t postfix_master_t:dir { search getattr };
+allow mysqld_t postfix_master_t:file { read open };
+allow mysqld_t postfix_pickup_t:dir { search getattr };
+allow mysqld_t postfix_pickup_t:file { read open };
+allow mysqld_t postfix_qmgr_t:dir { search getattr };
+allow mysqld_t postfix_qmgr_t:file { read open };
+allow mysqld_t proc_net_t:file { read getattr open };
+allow mysqld_t self:process getattr;
+allow mysqld_t self:unix_stream_socket connectto;
+allow mysqld_t syslogd_t:dir { search getattr };
+allow mysqld_t syslogd_t:file { read open };
+allow mysqld_t system_dbusd_t:dir { search getattr };
+allow mysqld_t system_dbusd_t:file { read open };
+allow mysqld_t tmp_t:file { getattr open append };
+allow mysqld_t udev_t:dir { search getattr };
+allow mysqld_t udev_t:file { read open };
+allow mysqld_t unconfined_t:dir { search getattr };
+allow mysqld_t unconfined_t:file { read open };
+allow mysqld_t netutils_t:dir search;
+allow mysqld_t rpm_t:dir search;
+allow mysqld_t inetd_child_t:dir search;
